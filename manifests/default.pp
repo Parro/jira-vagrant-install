@@ -9,6 +9,7 @@ define append_if_no_such_line($file, $line, $refreshonly = 'false') {
 class must-have {
   include apt
   include postgresql::server
+#  include '::mysql::server'
 
   apt::ppa { "ppa:webupd8team/java": }
 
@@ -44,6 +45,16 @@ class must-have {
     user     => 'jira',
     password => 'jira',
     require  => Exec['create_jira_home'],
+  }
+
+  class { 'mysql::server':
+    root_password    => 'root'
+  }
+
+  mysql_database { 'jira':
+    ensure  => 'present',
+    charset => 'utf8',
+    collate => 'utf8_unicode_ci',
   }
 
   package { ["oracle-java7-installer"]:
